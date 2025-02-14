@@ -1,0 +1,15 @@
+include: package:lints/recommended.yaml
+
+analyzer:
+  exclude:
+    - test/openssl.dart
+  language:
+    strict-casts: true
+
+formatter:
+  line_length: 80
+
+linter:
+  rules:
+    - prefer_double_quotes
+    - camel_case_types
