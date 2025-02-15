@@ -11,6 +11,8 @@ abstract interface class SCP03CryptoInterface {
   Uint8List cmacAes128(Uint8List key, Uint8List data);
 }
 
+/// A class that implements the SCP03 (Secure Channel Protocol '03')
+/// for secure communication using AES-128 encryption.
 class Scp03 {
   // Constants
   static const blockSize = 16;
@@ -24,6 +26,7 @@ class Scp03 {
   int counter = 0x00;
   Uint8List macChainingValue;
 
+  /// Creates an instance of [Scp03] with the given encryption keys and crypto interface.
   Scp03({
     required this.crypto,
     required List<int> senc,
@@ -40,6 +43,7 @@ class Scp03 {
     assert(initialMacChainingValue.length == blockSize);
   }
 
+  /// Generates a secure CAPDU command by encrypting the data and adding a C-MAC.
   CAPDU generateCommand(CAPDU apdu) {
     counter++;
 
@@ -82,6 +86,7 @@ class Scp03 {
     );
   }
 
+  /// Checks the response RAPDU by verifying the MAC.
   bool checkResponse(RAPDU rapdu) {
     final data = rapdu.data;
     if (data.length < 8) {
@@ -106,6 +111,7 @@ class Scp03 {
     return listEquals(rmac, expected);
   }
 
+  /// Decrypts the response data from the RAPDU.
   Uint8List decryptResponseData(RAPDU rapdu) {
     final data = rapdu.data;
     final cipheredData = rapdu.data.sublist(0, data.length - 8);
@@ -129,6 +135,7 @@ class Scp03 {
     return plainData;
   }
 
+  /// Generates a secure RAPDU response by encrypting the data and adding a R-MAC.
   RAPDU generateResponse(RAPDU rapdu, List<int> macChainingValue) {
     this.macChainingValue = Uint8List.fromList(macChainingValue);
 
@@ -168,6 +175,7 @@ class Scp03 {
     );
   }
 
+  /// Generates the ICV (Initial Chaining Value) for the command.
   Uint8List commandICV() {
     final counterBlock = Uint8List.fromList([
       ...List.filled(blockSize - 1, 0),
@@ -180,6 +188,7 @@ class Scp03 {
     );
   }
 
+  /// Generates the ICV (Initial Chaining Value) for the response.
   Uint8List responeICV() {
     final counterBlock = Uint8List.fromList([
       0x80,
@@ -193,6 +202,7 @@ class Scp03 {
     );
   }
 
+  /// Pads the data to the block size using the ISO/IEC 7816-4 padding scheme.
   static Uint8List _padData(Uint8List payload) {
     final res = [...payload, 0x80];
     final padding = (blockSize - res.length % blockSize) % blockSize;

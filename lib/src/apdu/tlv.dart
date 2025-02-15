@@ -1,19 +1,24 @@
 import "dart:typed_data";
 
+/// A class representing a TLV (Tag-Length-Value) data object.
 class TLV {
   List<int> tag;
   List<int> value;
 
+  /// Creates a TLV object with the given tag and value.
   TLV({required this.tag, required this.value});
 
+  /// Checks if the TLV object is constructed.
   bool isConstructed() {
     return (tag[0] & 0x20) != 0;
   }
 
+  /// Returns the TLV object as a byte array.
   Uint8List get data {
     return Uint8List.fromList([...tag, ...length, ...value]);
   }
 
+  /// Returns the length of the TLV value as a byte array.
   Uint8List get length {
     final len = value.length;
     if (len < 0x80) {

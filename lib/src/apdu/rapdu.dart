@@ -3,18 +3,23 @@ import "dart:typed_data";
 
 import "ext.dart";
 
+/// A class representing a Response APDU (Application Protocol Data Unit).
 class RAPDU {
   final int sw1;
   final int sw2;
   final List<int> data;
 
+  /// Creates a RAPDU object with the given parameters.
   RAPDU({
     required this.data,
     required this.sw1,
     required this.sw2,
   });
 
+  /// Returns the length of the RAPDU object.
   int get length => 2 + data.length;
+
+  /// Returns the status word of the RAPDU object as a hexadecimal string.
   String get statusWord => "${sw1.toHexString()}${sw2.toHexString()}";
 
   @override
@@ -22,6 +27,7 @@ class RAPDU {
     return "R_APDU {sw1: ${sw1.toHexString()}, sw2: ${sw2.toHexString()}, data: ${data.toHexString()}}";
   }
 
+  /// Creates a RAPDU object from a pointer of unsigned characters.
   static RAPDU fromBytes(ffi.Pointer<ffi.UnsignedChar> buffer, int length) {
     var sw1 = buffer[length - 2];
     var sw2 = buffer[length - 1];
@@ -32,8 +38,10 @@ class RAPDU {
     return RAPDU(data: data, sw1: sw1, sw2: sw2);
   }
 
+  /// Converts the RAPDU object to a hexadecimal string.
   String toHexString() => _toUint8List().toHexString();
 
+  /// Converts the RAPDU object to a Uint8List.
   Uint8List _toUint8List() {
     var buffer = Uint8List(length);
     for (var i = 0; i < data.length; i++) {
@@ -44,5 +52,6 @@ class RAPDU {
     return buffer;
   }
 
+  /// Checks if the RAPDU object has a status word of 0x9000 (OK).
   bool isOk() => sw1 == 0x90 && sw2 == 0x00;
 }

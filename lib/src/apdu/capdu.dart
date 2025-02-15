@@ -5,6 +5,7 @@ import "package:ffi/ffi.dart";
 
 import "ext.dart";
 
+/// A class representing a Command APDU (Application Protocol Data Unit).
 class CAPDU {
   final int cla;
   final int ins;
@@ -14,6 +15,7 @@ class CAPDU {
   final List<int> data;
   final int? le;
 
+  /// Creates a CAPDU object with the given parameters.
   CAPDU({
     required this.cla,
     required this.ins,
@@ -23,8 +25,10 @@ class CAPDU {
   })  : lc = data.length,
         le = data.isEmpty ? null : 0;
 
+  /// Returns the length of the CAPDU object.
   int get length => 4 + (lc == 0 ? 0 : 1) + data.length + (le == null ? 0 : 1);
 
+  /// Converts the CAPDU object to a Uint8List.
   Uint8List toUint8List() {
     var buffer = Uint8List(length);
     buffer[0] = cla;
@@ -44,6 +48,7 @@ class CAPDU {
     return buffer;
   }
 
+  /// Converts the CAPDU object to a pointer of unsigned characters.
   ffi.Pointer<ffi.UnsignedChar> toBytes() {
     var buffer = calloc<ffi.UnsignedChar>(length);
     buffer[0] = cla;
@@ -63,6 +68,7 @@ class CAPDU {
     return buffer;
   }
 
+  /// Converts the CAPDU object to a hexadecimal string.
   String toHexString() => toUint8List().toHexString();
 
   @override
