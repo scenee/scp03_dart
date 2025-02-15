@@ -16,7 +16,7 @@ void main() {
   final cla = 0x84;
   group("scp03::off-card", () {
     test("generateCommand 1", () {
-      final scp03 = Scp03(senc: senc, smac: smac, srmac: srmac, crypto: crypto);
+      final scp03 = Scp03(crypto: crypto, senc: senc, smac: smac, srmac: srmac);
       final data = [0x5F, 0x5F, 0x0];
       final capdu = CAPDU(cla: cla, ins: 0xD4, p1: 0x10, p2: 0x00, data: data);
       final eapdu = scp03.generateCommand(capdu);
@@ -24,7 +24,7 @@ void main() {
     });
 
     test("generateCommand 2", () {
-      final scp03 = Scp03(senc: senc, smac: smac, srmac: srmac, crypto: crypto);
+      final scp03 = Scp03(crypto: crypto, senc: senc, smac: smac, srmac: srmac);
 
       final capdu = CAPDU(
           cla: cla, ins: 0xD4, p1: 0x00, p2: 0x00, data: List.filled(239, 1));
@@ -33,7 +33,7 @@ void main() {
     });
 
     test("generateCommand empt)", () {
-      final scp03 = Scp03(senc: senc, smac: smac, srmac: srmac, crypto: crypto);
+      final scp03 = Scp03(crypto: crypto, senc: senc, smac: smac, srmac: srmac);
       final capdu = CAPDU(cla: cla, ins: 0x00, p1: 0x00, p2: 0x00, data: []);
       final eapdu = scp03.generateCommand(capdu);
       expect(eapdu.lc, 0x08);
@@ -43,7 +43,7 @@ void main() {
   });
   group("scp03::on-card", () {
     test("generateResponse 1", () {
-      final scp03 = Scp03(senc: senc, smac: smac, srmac: srmac, crypto: crypto);
+      final scp03 = Scp03(crypto: crypto, senc: senc, smac: smac, srmac: srmac);
       final rapdu = RAPDU(data: [0x01], sw1: 0x90, sw2: 0x00);
       final macChainingValue = [
         // Mock MAC chaining value
@@ -73,7 +73,7 @@ void main() {
       final smac = hex2bytes("E7EC0D35840422F82936AC539C56A579");
       final srmac = hex2bytes("310B1300C81F42261FB29C49F9DCE181");
 
-      final scp03 = Scp03(senc: senc, smac: smac, srmac: srmac, crypto: crypto);
+      final scp03 = Scp03(crypto: crypto, senc: senc, smac: smac, srmac: srmac);
       final rapdu = RAPDU(
           data: hex2bytes("97AA718D7E2B8324DA972C97BFC5DC5D34B8422527EB5FF8"),
           sw1: 0x90,
@@ -96,7 +96,7 @@ void main() {
     });
 
     test("generateResponse - check the padding chomp", () {
-      final scp03 = Scp03(senc: senc, smac: smac, srmac: srmac, crypto: crypto);
+      final scp03 = Scp03(crypto: crypto, senc: senc, smac: smac, srmac: srmac);
       final rapdu = RAPDU(
         data: [0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80, 0x90, 0xA0],
         sw1: 0x90,
@@ -126,7 +126,7 @@ void main() {
     });
 
     test("generateResponse empty", () {
-      final scp03 = Scp03(senc: senc, smac: smac, srmac: srmac, crypto: crypto);
+      final scp03 = Scp03(crypto: crypto, senc: senc, smac: smac, srmac: srmac);
       final rapdu = RAPDU(data: [], sw1: 0x90, sw2: 0x00);
       final macChainingValue = List.filled(16, 0);
       final erapdu = scp03.generateResponse(rapdu, macChainingValue);

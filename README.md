@@ -42,7 +42,7 @@ void main() {
 
   // Initialize SCP03
   SCP03CryptoInterface crypto = SCP03Crypto(createOpenSSL());
-  final scp03 = Scp03(senc: senc, smac: smac, srmac: srmac, crypto: crypto);
+  final scp03 = Scp03(crypto: crypto, senc: senc, smac: smac, srmac: srmac);
 
   // Create a plain CAPDU command
   final capdu = CAPDU(cla: 0x84, ins: 0xD4, p1: 0x10, p2: 0x00, data: [0x5F, 0x5F, 0x0]);

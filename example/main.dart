@@ -9,7 +9,7 @@ void main() {
   final srmac = hex2bytes("41677fb6398459199f1e569760df91c1");
 
   SCP03CryptoInterface crypto = SCP03Crypto(createOpenSSL());
-  final scp03 = Scp03(senc: senc, smac: smac, srmac: srmac, crypto: crypto);
+  final scp03 = Scp03(crypto: crypto, senc: senc, smac: smac, srmac: srmac);
 
   final data = [0x5F, 0x5F, 0x0];
   final capdu = CAPDU(cla: 0x84, ins: 0xD4, p1: 0x10, p2: 0x00, data: data);
