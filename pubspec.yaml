@@ -17,7 +17,7 @@ dev_dependencies:
 
 
 ffigen:
-  output: 'test/openssl.dart'
+  output: 'test/scp03_crypto/openssl.dart'
   name: 'OpenSSL'
   # You have to specify the path to the header files of the C library you want to bind.
   compiler-opts:

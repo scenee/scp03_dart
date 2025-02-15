@@ -2,7 +2,7 @@
 import "package:scp03/scp03.dart";
 
 import "../test/helper.dart";
-import "../test/scp03_crypto.dart";
+import "../test/scp03_crypto/scp03_crypto.dart";
 
 void main() {
   final senc = hex2bytes("161886cb9ae7403d8dbccfe36b8a0426");

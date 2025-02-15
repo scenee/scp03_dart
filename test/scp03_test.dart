@@ -1,10 +1,11 @@
 import "dart:typed_data";
 
 import "package:scp03/scp03.dart";
+import "package:scp03/src/apdu/tlv_parser.dart";
 import "package:test/test.dart";
 
 import "helper.dart";
-import "scp03_crypto.dart";
+import "scp03_crypto/scp03_crypto.dart";
 
 final senc = hex2bytes("161886cb9ae7403d8dbccfe36b8a0426");
 final smac = hex2bytes("6387ba65479cb7eb9df97bd48ac33159");
@@ -89,7 +90,7 @@ void main() {
       expect(ok, isTrue);
 
       final data = scp03.decryptResponseData(rapdu);
-      final tlv = TLV.parse(data)[0];
+      final tlv = TLVParser.parse(data)[0];
       expect(tlv.tag, [0xD3]);
       expect(tlv.value.length, 0x0D);
     });
