@@ -5,7 +5,7 @@ import "package:scp03/src/apdu/ext.dart";
 import "package:test/test.dart";
 
 import "helper.dart";
-import "scp03_crypto/scp03_crypto.dart";
+import "crypto/scp03_crypto.dart";
 
 final senc = hex2bytes("161886cb9ae7403d8dbccfe36b8a0426");
 final smac = hex2bytes("6387ba65479cb7eb9df97bd48ac33159");

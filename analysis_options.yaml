@@ -2,7 +2,7 @@ include: package:lints/recommended.yaml
 
 analyzer:
   exclude:
-    - test/scp03_crypto/openssl.dart
+    - test/crypto/openssl.dart
   language:
     strict-casts: true
 
