@@ -1,4 +1,3 @@
-
 import "package:scp03/scp03.dart";
 
 import "../test/helper.dart";
@@ -15,5 +14,5 @@ void main() {
   final data = [0x5F, 0x5F, 0x0];
   final capdu = CAPDU(cla: 0x84, ins: 0xD4, p1: 0x10, p2: 0x00, data: data);
   final eapdu = scp03.generateCommand(capdu);
-  print("APDU: ${eapdu.data.toHexString()}");
+  print("APDU: ${eapdu.toString()}");
 }

@@ -4,6 +4,7 @@ import "dart:ffi" as ffi;
 import "dart:typed_data";
 import "package:ffi/ffi.dart";
 import "package:scp03/scp03.dart";
+import "package:scp03/src/apdu/ext.dart";
 
 import "openssl.dart";
 
