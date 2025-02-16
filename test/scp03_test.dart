@@ -32,7 +32,7 @@ void main() {
       expect(eapdu.data.length, lessThanOrEqualTo(239 + 8 + 1));
     });
 
-    test("generateCommand empt)", () {
+    test("generateCommand - empty data: integrity only", () {
       final scp03 = Scp03(crypto: crypto, senc: senc, smac: smac, srmac: srmac);
       final capdu = CAPDU(cla: cla, ins: 0x00, p1: 0x00, p2: 0x00, data: []);
       final eapdu = scp03.generateCommand(capdu);
@@ -125,7 +125,7 @@ void main() {
       expect(listEquals(data, rapdu.data), isTrue);
     });
 
-    test("generateResponse empty", () {
+    test("generateResponse - empty data: integrity only", () {
       final scp03 = Scp03(crypto: crypto, senc: senc, smac: smac, srmac: srmac);
       final rapdu = RAPDU(data: [], sw1: 0x90, sw2: 0x00);
       final macChainingValue = List.filled(16, 0);
