@@ -1,4 +1,4 @@
-import "package:scp03/src/apdu/tlv_parser.dart";
+import "package:scp03/src/tlv/tlv_parser.dart";
 import "package:test/test.dart";
 
 void main() {

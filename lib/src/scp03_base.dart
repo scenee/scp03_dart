@@ -2,7 +2,7 @@ import "dart:developer";
 import "dart:typed_data";
 
 import "apdu/capdu.dart";
-import "apdu/ext.dart";
+import "helper.dart";
 import "apdu/rapdu.dart";
 
 abstract interface class SCP03CryptoInterface {

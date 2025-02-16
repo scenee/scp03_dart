@@ -1,6 +1,6 @@
 import "package:test/test.dart";
-import "package:scp03/src/apdu/tlv.dart";
-import "package:scp03/src/apdu/tlv_codec.dart";
+import "package:scp03/src/tlv/tlv.dart";
+import "package:scp03/src/tlv/tlv_codec.dart";
 import "dart:typed_data";
 
 void main() {

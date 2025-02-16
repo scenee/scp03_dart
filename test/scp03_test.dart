@@ -1,7 +1,7 @@
 import "dart:typed_data";
 
 import "package:scp03/scp03.dart";
-import "package:scp03/src/apdu/ext.dart";
+import "package:scp03/src/helper.dart";
 import "package:test/test.dart";
 
 import "helper.dart";

@@ -1,7 +1,7 @@
 import "dart:ffi" as ffi;
 import "dart:typed_data";
 
-import "ext.dart";
+import "../helper.dart";
 
 /// A class representing a Response APDU (Application Protocol Data Unit).
 class RAPDU {

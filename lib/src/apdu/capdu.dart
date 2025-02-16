@@ -3,7 +3,7 @@ import "dart:typed_data";
 
 import "package:ffi/ffi.dart";
 
-import "ext.dart";
+import "../helper.dart";
 
 /// A class representing a Command APDU (Application Protocol Data Unit).
 class CAPDU {
