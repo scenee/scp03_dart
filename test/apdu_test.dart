@@ -31,7 +31,7 @@ void main() {
       final capdu =
           CAPDU(cla: 0x00, ins: 0xA4, p1: 0x04, p2: 0x00, data: [0x3F, 0x00]);
       expect(capdu.toString(),
-          "C_APDU{cla: 00 ins: A4 p1: 04 p2: 00 lc: 02 le: 00 data: 3F00}");
+          "C_APDU{cla: 00 ins: a4 p1: 04 p2: 00 lc: 02 le: 00 data: 3f00}");
     });
   });
 

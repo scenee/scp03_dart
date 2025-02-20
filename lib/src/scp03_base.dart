@@ -1,8 +1,9 @@
 import "dart:developer";
 import "dart:typed_data";
 
+import "package:ffi_helper/ffi_helper.dart";
+
 import "apdu/capdu.dart";
-import "helper.dart";
 import "apdu/rapdu.dart";
 
 abstract interface class SCP03CryptoInterface {
@@ -108,7 +109,7 @@ class Scp03 {
         )
         .sublist(0, 8);
     log("rmac: ${rmac.toHexString()}, expected: ${expected.toHexString()}");
-    return listEquals(rmac, expected);
+    return memEquals(rmac, expected);
   }
 
   /// Decrypts the response data from the RAPDU.

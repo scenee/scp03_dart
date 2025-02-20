@@ -1,10 +1,9 @@
 import "dart:typed_data";
 
+import "package:ffi_helper/ffi_helper.dart";
 import "package:scp03/scp03.dart";
-import "package:scp03/src/helper.dart";
 import "package:test/test.dart";
 
-import "helper.dart";
 import "crypto/scp03_crypto.dart";
 
 final senc = hex2bytes("161886cb9ae7403d8dbccfe36b8a0426");
@@ -65,7 +64,7 @@ void main() {
       final data = scp03.decryptResponseData(erapdu);
       expect(scp03.counter, 1);
       expect(data.length, rapdu.data.length);
-      expect(listEquals(data, rapdu.data), isTrue);
+      expect(memEquals(data, Uint8List.fromList(rapdu.data)), isTrue);
     });
 
     test("generateResponse 2", () {

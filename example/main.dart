@@ -1,6 +1,5 @@
+import "package:ffi_helper/ffi_helper.dart";
 import "package:scp03/scp03.dart";
-
-import "../test/helper.dart";
 import "../test/crypto/scp03_crypto.dart";
 
 void main() {

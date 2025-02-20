@@ -9,6 +9,8 @@ environment:
 # Add regular dependencies here.
 dependencies:
   ffi: ^2.1.3
+  ffi_helper:
+    git: https://github.com/scenee/ffi_helper_dart.git
 
 dev_dependencies:
   lints: ^5.0.0
