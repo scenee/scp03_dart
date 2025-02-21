@@ -38,11 +38,8 @@ class RAPDU {
     return RAPDU(data: data, sw1: sw1, sw2: sw2);
   }
 
-  /// Converts the RAPDU object to a hexadecimal string.
-  String toHexString() => _toUint8List().toHexString();
-
   /// Converts the RAPDU object to a Uint8List.
-  Uint8List _toUint8List() {
+  Uint8List toUint8List() {
     var buffer = Uint8List(length);
     for (var i = 0; i < data.length; i++) {
       buffer[i] = data[i];

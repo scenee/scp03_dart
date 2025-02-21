@@ -67,9 +67,6 @@ class CAPDU {
     return buffer;
   }
 
-  /// Converts the CAPDU object to a hexadecimal string.
-  String toHexString() => toUint8List().toHexString();
-
   @override
   String toString() {
     return "C_APDU{cla: ${cla.toHexString()} ins: ${ins.toHexString()} p1: ${p1.toHexString()} p2: ${p2.toHexString()} lc: ${lc.toHexString()} le: ${le?.toHexString() ?? "none"} data: ${data.toHexString()}}";
