@@ -88,7 +88,7 @@ class Scp03 {
   }
 
   /// Checks the response RAPDU by verifying the MAC.
-  bool checkResponse(RAPDU rapdu) {
+  bool checkResponse(RAPDU rapdu, {bool withSW = true}) {
     final data = rapdu.data;
     if (data.length < 8) {
       return false;
@@ -103,8 +103,8 @@ class Scp03 {
           Uint8List.fromList([
             ...macChainingValue,
             ...rdf,
-            rapdu.sw1,
-            rapdu.sw2,
+            if (withSW) rapdu.sw1,
+            if (withSW) rapdu.sw2,
           ]),
         )
         .sublist(0, 8);
