@@ -49,43 +49,53 @@ class Scp03 {
     counter++;
 
     final plainText = Uint8List.fromList(apdu.data);
-
-    var chiperedData = Uint8List(0);
-    if (plainText.isNotEmpty) {
-      final icv = commandICV();
-      final paddedData = _padData(plainText);
-      chiperedData = crypto.aes128CbcEncrypt(
-        senc,
-        icv,
-        paddedData,
-      );
-    }
+    final chiperedData = encryptPayload(plainText);
 
     // Update MAC chaining value
     final lcc = chiperedData.length + 8;
-    macChainingValue = crypto.cmacAes128(
-      smac,
-      Uint8List.fromList([
-        ...macChainingValue,
-        apdu.cla,
-        apdu.ins,
-        apdu.p1,
-        apdu.p2,
-        lcc,
-        ...chiperedData,
-      ]),
-    );
-
-    final cmac = macChainingValue.sublist(0, 8);
+    updateMacChainingValue(Uint8List.fromList([
+      apdu.cla,
+      apdu.ins,
+      apdu.p1,
+      apdu.p2,
+      lcc,
+      ...chiperedData,
+    ]));
 
     return CAPDU(
       cla: apdu.cla,
       ins: apdu.ins,
       p1: apdu.p1,
       p2: apdu.p2,
-      data: chiperedData + cmac,
+      data: chiperedData + cmac(),
     );
   }
+
+  Uint8List encryptPayload(Uint8List payload) {
+    var chiperedData = Uint8List(0);
+    if (payload.isNotEmpty) {
+      final icv = commandICV();
+      final paddedData = _padData(payload);
+      chiperedData = crypto.aes128CbcEncrypt(
+        senc,
+        icv,
+        paddedData,
+      );
+    }
+    return chiperedData;
+  }
+
+  void updateMacChainingValue(Uint8List macPainText) {
+    macChainingValue = crypto.cmacAes128(
+      smac,
+      Uint8List.fromList([
+        ...macChainingValue,
+        ...macPainText,
+      ]),
+    );
+  }
+
+  Uint8List cmac() => macChainingValue.sublist(0, 8);
 
   /// Checks the response RAPDU by verifying the MAC.
   bool checkResponse(RAPDU rapdu, {bool withSW = true}) {
