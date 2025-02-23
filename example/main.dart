@@ -1,4 +1,4 @@
-import "package:ffi_helper/ffi_helper.dart";
+import "package:ffi_assist/ffi_assist.dart";
 import "package:scp03/scp03.dart";
 import "../test/crypto/scp03_crypto.dart";
 

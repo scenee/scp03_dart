@@ -1,7 +1,7 @@
 import "dart:developer";
 import "dart:typed_data";
 
-import "package:ffi_helper/ffi_helper.dart";
+import "package:ffi_assist/ffi_assist.dart";
 
 import "apdu/capdu.dart";
 import "apdu/rapdu.dart";

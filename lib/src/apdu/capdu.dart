@@ -2,7 +2,7 @@ import "dart:ffi" as ffi;
 import "dart:typed_data";
 
 import "package:ffi/ffi.dart";
-import "package:ffi_helper/ffi_helper.dart";
+import "package:ffi_assist/ffi_assist.dart";
 
 /// A class representing a Command APDU (Application Protocol Data Unit).
 class CAPDU {
