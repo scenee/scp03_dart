@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-on-linux:
+  test-on-linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
       - name: Run tests
         run: dart test
 
-  build-on-macos:
+  test-on-macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
