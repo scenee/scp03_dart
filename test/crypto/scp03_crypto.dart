@@ -8,21 +8,8 @@ import "package:scp03/scp03.dart";
 
 import "openssl.dart";
 
-String getOpensslLibraryPath() {
-  final String libraryPath;
-  if (Platform.isLinux) {
-    libraryPath = "/usr/lib/aarch64-linux-gnu/libcrypto.so"; // For Linux
-  } else if (Platform.isMacOS) {
-    libraryPath =
-        "/opt/local/libexec/openssl3/lib/libcrypto.3.dylib"; // For Mac
-  } else {
-    throw UnsupportedError("Unsupported platform");
-  }
-  return libraryPath;
-}
-
-OpenSSL createOpenSSL() {
-  final dylib = ffi.DynamicLibrary.open(getOpensslLibraryPath());
+Future<OpenSSL> createOpenSSL() async {
+  final dylib = ffi.DynamicLibrary.open(await getLibraryPath());
   return OpenSSL(dylib);
 }
 
@@ -161,4 +148,49 @@ class SCP03Crypto implements SCP03CryptoInterface {
       return Uint8List.fromList(cmacPtr.cast<ffi.Uint8>().asTypedList(16));
     });
   }
+}
+
+Future<String> getLibraryPath() async {
+  String path = "";
+  if (Platform.isLinux) {
+    for (final dir in [
+      "/usr/lib/x86_64-linux-gnu",
+      "/usr/lib/aarch64-linux-gnu/"
+    ]) {
+      final directory = Directory(dir);
+      if (!await directory.exists()) {
+        continue;
+      }
+      final List<FileSystemEntity> entities = await Directory(dir)
+          .list(recursive: true, followLinks: false)
+          .where((e) => e.path.contains("libcrypto.so"))
+          .toList();
+      if (entities.isNotEmpty) {
+        path = entities.first.path;
+        break;
+      }
+    }
+  } else if (Platform.isMacOS) {
+    for (final dir in [
+      "/opt/homebrew/Cellar/openssl@3", // Homebrew
+      "/opt/local/libexec/openssl3", // MacPorts
+    ]) {
+      final directory = Directory(dir);
+      if (!await directory.exists()) {
+        continue;
+      }
+      final List<FileSystemEntity> entities = await directory
+          .list(recursive: true, followLinks: false)
+          .where((e) => e.path.contains("libcrypto.dylib"))
+          .toList();
+      if (entities.isNotEmpty) {
+        path = entities.first.path;
+        break;
+      }
+    }
+  }
+  if (path.isEmpty) {
+    throw UnsupportedError("Unsupported platform");
+  }
+  return path;
 }

@@ -10,8 +10,9 @@ final senc = hex2bytes("161886cb9ae7403d8dbccfe36b8a0426");
 final smac = hex2bytes("6387ba65479cb7eb9df97bd48ac33159");
 final srmac = hex2bytes("41677fb6398459199f1e569760df91c1");
 
-void main() {
-  SCP03CryptoInterface crypto = SCP03Crypto(createOpenSSL());
+void main() async {
+  final openssl = await createOpenSSL();
+  SCP03CryptoInterface crypto = SCP03Crypto(openssl);
   final cla = 0x84;
   group("scp03::off-card", () {
     test("generateCommand 1", () {
