@@ -45,6 +45,10 @@ class Scp03 {
   }
 
   /// Generates a secure CAPDU command by encrypting the data and adding a C-MAC.
+  ///
+  /// The counter for ICV is incremented for each command. The C-MAC is calculated
+  /// with the C-APDU header and the encrypted payload data. The MAC chaining value
+  /// is updated with the C-APDU header and the encrypted payload data.
   CAPDU generateCommand(CAPDU apdu) {
     counter++;
 
@@ -71,6 +75,12 @@ class Scp03 {
     );
   }
 
+  /// Encrypts the payload data using AES-128 CBC encryption.
+  ///
+  /// The payload is padded using the ISO/IEC 7816-4 padding scheme. Somtimes
+  /// the cmac doesn't contains the C-APDU header and Lc field.  You can use the
+  /// [updateMacChainingValue] method to update the MAC chaining value with the
+  /// ecnrypted payload.
   Uint8List encryptPayload(Uint8List payload) {
     var chiperedData = Uint8List(0);
     if (payload.isNotEmpty) {
@@ -85,16 +95,21 @@ class Scp03 {
     return chiperedData;
   }
 
-  void updateMacChainingValue(Uint8List macPainText) {
+  /// Returns the updated MAC chaining value.
+  ///
+  /// The MAC chaining value is updated by calculating the CMAC of the given
+  /// [macInputText] and the current MAC chaining value.
+  void updateMacChainingValue(Uint8List macInputText) {
     macChainingValue = crypto.cmacAes128(
       smac,
       Uint8List.fromList([
         ...macChainingValue,
-        ...macPainText,
+        ...macInputText,
       ]),
     );
   }
 
+  /// Returns the C-MAC value from the current MAC chaining value.
   Uint8List cmac() => macChainingValue.sublist(0, 8);
 
   /// Checks the response RAPDU by verifying the MAC.
@@ -147,6 +162,10 @@ class Scp03 {
   }
 
   /// Generates a secure RAPDU response by encrypting the data and adding a R-MAC.
+  ///
+  /// The counter for ICV is incremented for each response. The MAC chaining
+  /// value is updated with the given [macChainingValue]. The R-MAC is
+  /// calculated with the R-APDU header and the encrypted payload data.
   RAPDU generateResponse(RAPDU rapdu, List<int> macChainingValue) {
     this.macChainingValue = Uint8List.fromList(macChainingValue);
 
@@ -187,6 +206,8 @@ class Scp03 {
   }
 
   /// Generates the ICV (Initial Chaining Value) for the command.
+  ///
+  /// This method doesn't increment the counter.
   Uint8List commandICV() {
     final counterBlock = Uint8List.fromList([
       ...List.filled(blockSize - 1, 0),

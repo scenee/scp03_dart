@@ -3,6 +3,7 @@ import "dart:typed_data";
 import "tlv.dart";
 import "tlv_parser.dart";
 
+/// A codec for encoding and decoding TLV (Tag-Length-Value) data objects.
 class TLVCodec extends Codec<List<TLV>, Uint8List> {
   @override
   Converter<Uint8List, List<TLV>> get decoder => _TLVDecoder();

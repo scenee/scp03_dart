@@ -9,6 +9,9 @@ class TLV {
   TLV({required this.tag, required this.value});
 
   /// Checks if the TLV object is constructed.
+  ///
+  /// If it's constructed, the value is a list of TLV objects. You can use
+  /// the [TLVParser] to parse the value into a list of TLV objects.
   bool isConstructed() {
     return (tag[0] & 0x20) != 0;
   }
@@ -19,6 +22,9 @@ class TLV {
   }
 
   /// Returns the length of the TLV value as a byte array.
+  ///
+  /// The length field is encoded in BER-TLV format, not an integer value of the
+  /// value length.
   Uint8List get length {
     final len = value.length;
     if (len < 0x80) {

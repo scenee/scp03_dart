@@ -49,6 +49,6 @@ class RAPDU {
     return buffer;
   }
 
-  /// Checks if the RAPDU object has a status word of 0x9000 (OK).
+  /// Checks if the status word of this RAPDU object is '90 00'.
   bool isOk() => sw1 == 0x90 && sw2 == 0x00;
 }
