@@ -46,35 +46,59 @@ class Scp03 {
     assert(initialMacChainingValue.length == blockSize);
   }
 
-  /// Generates a secure CAPDU command by encrypting the data and adding a C-MAC.
+  /// Returns a secure [CAPDU] object including an encrypted data and the C-MAC
+  /// from the given [apdu] object.
   ///
-  /// The counter for ICV is incremented for each command. The C-MAC is calculated
-  /// with the C-APDU header and the encrypted payload data. The MAC chaining value
-  /// is updated with the C-APDU header and the encrypted payload data.
+  /// The counter for ICV is incremented for each method call.
   CAPDU generateCommand(CAPDU apdu) {
-    counter++;
-
-    final plainText = Uint8List.fromList(apdu.data);
-    final chiperedData = encryptPayload(plainText);
-
-    // Update MAC chaining value
-    final lcc = chiperedData.length + 8;
-    updateMacChainingValue(Uint8List.fromList([
-      apdu.cla,
-      apdu.ins,
-      apdu.p1,
-      apdu.p2,
-      lcc,
-      ...chiperedData,
-    ]));
-
+    final (cipheredData, cmac) = generateCommandPayload(
+      apdu.data,
+      (cipheredData) {
+        final lcc = cipheredData.length + 8;
+        return Uint8List.fromList(
+            [apdu.cla, apdu.ins, apdu.p1, apdu.p2, lcc, ...cipheredData]);
+      },
+    );
     return CAPDU(
       cla: apdu.cla,
       ins: apdu.ins,
       p1: apdu.p1,
       p2: apdu.p2,
-      data: chiperedData + cmac(),
+      data: [...cipheredData, ...cmac],
     );
+  }
+
+  /// Returns an encrypted payload data and the C-MAC for the given [data].
+  ///
+  /// If you want to modify the plaintext data for the MAC chaining value
+  /// calculation, you can provide a [macPlainTextModifier] function. This
+  /// function should return the modified plaintext data for the MAC calculation.
+  /// By default, the MAC is calculated with the C-APDU header and the encrypted
+  /// payload data.
+  ///
+  /// The counter for ICV is incremented for each method call.
+  (Uint8List cipheredData, Uint8List cmac) generateCommandPayload(
+    List<int> data,
+    Uint8List Function(Uint8List cipheredData) macPlainTextModifier,
+  ) {
+    counter++;
+
+    final plainText = Uint8List.fromList(data);
+    final cipheredData = _encryptPayload(plainText);
+
+    // Update MAC chaining value
+    final Uint8List macInputText =
+        Uint8List.fromList(macPlainTextModifier(cipheredData));
+
+    _macChainingValue = crypto.cmacAes128(
+      smac,
+      Uint8List.fromList([
+        ..._macChainingValue,
+        ...macInputText,
+      ]),
+    );
+    final cmac = _macChainingValue.sublist(0, 8);
+    return (cipheredData, cmac);
   }
 
   /// Encrypts the payload data using AES-128 CBC encryption.
@@ -83,13 +107,7 @@ class Scp03 {
   /// contains the C-APDU header and Lc field. That's why this method is. You
   /// can use this with [updateMacChainingValue] and [cmac] methods to generate
   /// the SCP03 command payload and cmac as below:
-  /// ```dart
-  /// final cipheredData = scp03.encryptPayload(data);
-  /// scp03.updateMacChainingValue(cipheredData);
-  /// final cmac = scp03.cmac();
-  /// final commandData = Uint8List.fromList([...cipheredData, ...cmac]);
-  /// ```
-  Uint8List encryptPayload(Uint8List payload) {
+  Uint8List _encryptPayload(Uint8List payload) {
     var chiperedData = Uint8List(0);
     if (payload.isNotEmpty) {
       final icv = commandICV();
@@ -103,23 +121,10 @@ class Scp03 {
     return chiperedData;
   }
 
-  /// Update the current MAC chaining value with the given [macInputText].
-  ///
-  /// This operation is used for APDU Command C-MAC generation.
-  void updateMacChainingValue(Uint8List macInputText) {
-    _macChainingValue = crypto.cmacAes128(
-      smac,
-      Uint8List.fromList([
-        ..._macChainingValue,
-        ...macInputText,
-      ]),
-    );
-  }
-
-  /// Returns the C-MAC value from the current MAC chaining value.
-  Uint8List cmac() => _macChainingValue.sublist(0, 8);
-
   /// Checks the response RAPDU by verifying the MAC.
+  ///
+  /// If the [withSW] is false, the SW1 and SW2 bytes are not included to
+  /// calculate the R-MAC.
   bool checkResponse(RAPDU rapdu, {bool withSW = true}) {
     final data = rapdu.data;
     if (data.length < 8) {

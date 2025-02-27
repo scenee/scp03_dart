@@ -20,6 +20,8 @@ void main() async {
       final data = [0x5F, 0x5F, 0x0];
       final capdu = CAPDU(cla: cla, ins: 0xD4, p1: 0x10, p2: 0x00, data: data);
       final eapdu = scp03.generateCommand(capdu);
+      expect(scp03.counter, 1);
+      expect(scp03.macChainingValue, isNot(Uint8List(Scp03.blockSize)));
       expect(eapdu.data.length, 16 + 8);
     });
 
@@ -29,7 +31,26 @@ void main() async {
       final capdu = CAPDU(
           cla: cla, ins: 0xD4, p1: 0x00, p2: 0x00, data: List.filled(239, 1));
       final eapdu = scp03.generateCommand(capdu);
+      expect(scp03.counter, 1);
+      expect(scp03.macChainingValue, isNot(Uint8List(Scp03.blockSize)));
       expect(eapdu.data.length, lessThanOrEqualTo(239 + 8 + 1));
+    });
+
+    test("generateCommand - macPlainTextModifier", () {
+      final senc = hex2bytes("f0804c706ed866c2ae6394155336fa89");
+      final smac = hex2bytes("d96dc9ac79a10e8905c9d3ff6ffd2cc3");
+      final srmac = hex2bytes("fa2efe27e1351e7cd2402d12f1b262db");
+      final scp03 = Scp03(crypto: crypto, senc: senc, smac: smac, srmac: srmac);
+      final (cipheredData, cmac) = scp03.generateCommandPayload(
+        [0x01, 0x02, 0x03, 0x04],
+        (cipheredData) => cipheredData,
+      );
+      expect(scp03.counter, 1);
+      expect(scp03.macChainingValue, isNot(Uint8List(Scp03.blockSize)));
+      expect(cipheredData.length, 16);
+      expect(cmac.length, 8);
+      expect(cmac, hex2bytes("06f279048ca232f9"));
+      expect(cmac, scp03.macChainingValue.sublist(0, 8));
     });
 
     test("generateCommand - empty data: integrity only", () {
