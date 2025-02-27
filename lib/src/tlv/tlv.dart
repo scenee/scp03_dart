@@ -43,3 +43,10 @@ class TLV {
     }
   }
 }
+
+extension TLVList on List<TLV> {
+  /// Converts the list of TLV objects to a Uint8List.
+  Uint8List toUint8List() {
+    return Uint8List.fromList(map((e) => e.data).expand((e) => e).toList());
+  }
+}
