@@ -25,7 +25,9 @@ class Scp03 {
   final Uint8List srmac;
 
   int counter = 0x00;
-  Uint8List macChainingValue;
+
+  Uint8List _macChainingValue;
+  Uint8List get macChainingValue => _macChainingValue;
 
   /// Creates an instance of [Scp03] with the given encryption keys and crypto interface.
   Scp03({
@@ -37,7 +39,7 @@ class Scp03 {
   })  : senc = Uint8List.fromList(senc),
         smac = Uint8List.fromList(smac),
         srmac = Uint8List.fromList(srmac),
-        macChainingValue = Uint8List.fromList(initialMacChainingValue) {
+        _macChainingValue = Uint8List.fromList(initialMacChainingValue) {
     assert(senc.length == blockSize);
     assert(smac.length == blockSize);
     assert(srmac.length == blockSize);
@@ -77,10 +79,16 @@ class Scp03 {
 
   /// Encrypts the payload data using AES-128 CBC encryption.
   ///
-  /// The payload is padded using the ISO/IEC 7816-4 padding scheme. Somtimes
-  /// the cmac doesn't contains the C-APDU header and Lc field.  You can use the
-  /// [updateMacChainingValue] method to update the MAC chaining value with the
-  /// ecnrypted payload.
+  /// The payload is padded using 4.1.4 AES Padding. Somtimes the cmac doesn't
+  /// contains the C-APDU header and Lc field. That's why this method is. You
+  /// can use this with [updateMacChainingValue] and [cmac] methods to generate
+  /// the SCP03 command payload and cmac as below:
+  /// ```dart
+  /// final cipheredData = scp03.encryptPayload(data);
+  /// scp03.updateMacChainingValue(cipheredData);
+  /// final cmac = scp03.cmac();
+  /// final commandData = Uint8List.fromList([...cipheredData, ...cmac]);
+  /// ```
   Uint8List encryptPayload(Uint8List payload) {
     var chiperedData = Uint8List(0);
     if (payload.isNotEmpty) {
@@ -95,22 +103,21 @@ class Scp03 {
     return chiperedData;
   }
 
-  /// Returns the updated MAC chaining value.
+  /// Update the current MAC chaining value with the given [macInputText].
   ///
-  /// The MAC chaining value is updated by calculating the CMAC of the given
-  /// [macInputText] and the current MAC chaining value.
+  /// This operation is used for APDU Command C-MAC generation.
   void updateMacChainingValue(Uint8List macInputText) {
-    macChainingValue = crypto.cmacAes128(
+    _macChainingValue = crypto.cmacAes128(
       smac,
       Uint8List.fromList([
-        ...macChainingValue,
+        ..._macChainingValue,
         ...macInputText,
       ]),
     );
   }
 
   /// Returns the C-MAC value from the current MAC chaining value.
-  Uint8List cmac() => macChainingValue.sublist(0, 8);
+  Uint8List cmac() => _macChainingValue.sublist(0, 8);
 
   /// Checks the response RAPDU by verifying the MAC.
   bool checkResponse(RAPDU rapdu, {bool withSW = true}) {
@@ -121,12 +128,12 @@ class Scp03 {
     final rdf = Uint8List.fromList(data.sublist(0, data.length - 8));
     final rmac = Uint8List.fromList(data.sublist(data.length - 8));
     log("Chipered Response data field: ${rdf.toHexString()}");
-    log("MAC chaining value: ${macChainingValue.toHexString()}");
+    log("MAC chaining value: ${_macChainingValue.toHexString()}");
     final expected = crypto
         .cmacAes128(
           srmac,
           Uint8List.fromList([
-            ...macChainingValue,
+            ..._macChainingValue,
             ...rdf,
             if (withSW) rapdu.sw1,
             if (withSW) rapdu.sw2,
@@ -167,7 +174,7 @@ class Scp03 {
   /// value is updated with the given [macChainingValue]. The R-MAC is
   /// calculated with the R-APDU header and the encrypted payload data.
   RAPDU generateResponse(RAPDU rapdu, List<int> macChainingValue) {
-    this.macChainingValue = Uint8List.fromList(macChainingValue);
+    _macChainingValue = Uint8List.fromList(macChainingValue);
 
     counter++;
 

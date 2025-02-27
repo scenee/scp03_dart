@@ -83,7 +83,9 @@ void main() async {
         0x55, 0xB6, 0x25, 0x62, 0xC7, 0x36, 0x9E, 0x25, 0x7F, 0xF3, 0xD1, 0xFA,
         0x5E, 0xD3, 0x38, 0x67
       ];
-      scp03.macChainingValue = Uint8List.fromList(macChainingValue);
+      // To update the mac chaining value
+      final _ = scp03.generateResponse(rapdu, macChainingValue);
+      // Update the counter value to the expected one
       scp03.counter = 13;
 
       final ok = scp03.checkResponse(rapdu);
