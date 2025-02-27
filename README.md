@@ -40,15 +40,16 @@ void main() {
   final smac = Uint8List.fromList([...]);
   final srmac = Uint8List.fromList([...]);
 
-  // Initialize SCP03
-  SCP03CryptoInterface crypto = SCP03Crypto(createOpenSSL());
+  // Initialize SCP03 with OpenSSL
+  final openssl = await createOpenSSL();
+  SCP03CryptoInterface crypto = SCP03Crypto(openssl);
   final scp03 = Scp03(crypto: crypto, senc: senc, smac: smac, srmac: srmac);
 
-  // Create a plain CAPDU command
+  // A plain CAPDU command
   final capdu = CAPDU(cla: 0x84, ins: 0xD4, p1: 0x10, p2: 0x00, data: [0x5F, 0x5F, 0x0]);
 
-  // Secure the CAPDU command using SCP03
-  final eapdu = scp03.secureMessage(capdu);
+  // Generate the CAPDU command using SCP03
+  final apdu = scp03.generateCommand(capdu);
 }
 ```
 
