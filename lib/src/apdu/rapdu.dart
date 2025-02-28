@@ -4,6 +4,10 @@ import "dart:typed_data";
 import "package:ffi_assist/ffi_assist.dart";
 
 /// A class representing a Response APDU (Application Protocol Data Unit).
+///
+/// The [int] values of all parameters are expected to be in the range of 0x00
+/// to 0xFF. If they are over the range, the values will be truncated to the
+/// range.
 class RAPDU {
   final int sw1;
   final int sw2;

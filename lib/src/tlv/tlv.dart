@@ -1,6 +1,10 @@
 import "dart:typed_data";
 
 /// A class representing a TLV (Tag-Length-Value) data object.
+///
+/// The [int] values of all parameters are expected to be in the range of 0x00
+/// to 0xFF. If they are over the range, the values will be truncated to the
+/// range.
 class TLV {
   List<int> tag;
   List<int> value;

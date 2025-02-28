@@ -5,6 +5,10 @@ import "package:ffi/ffi.dart";
 import "package:ffi_assist/ffi_assist.dart";
 
 /// A class representing a Command APDU (Application Protocol Data Unit).
+///
+/// The [int] values of all parameters are expected to be in the range of 0x00
+/// to 0xFF. If they are over the range, the values will be truncated to the
+/// range.
 class CAPDU {
   final int cla;
   final int ins;
