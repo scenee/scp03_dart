@@ -28,7 +28,8 @@ class RAPDU {
   }
 
   /// Creates a RAPDU object from a pointer of unsigned characters.
-  static RAPDU fromBytes(ffi.Pointer<ffi.UnsignedChar> buffer, int length) {
+  static RAPDU fromNativePointer(
+      ffi.Pointer<ffi.UnsignedChar> buffer, int length) {
     var sw1 = buffer[length - 2];
     var sw2 = buffer[length - 1];
     var data = <int>[];
@@ -39,7 +40,7 @@ class RAPDU {
   }
 
   /// Converts the RAPDU object to a Uint8List.
-  Uint8List toUint8List() {
+  Uint8List toBytes() {
     var buffer = Uint8List(length);
     for (var i = 0; i < data.length; i++) {
       buffer[i] = data[i];

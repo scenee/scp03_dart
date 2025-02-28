@@ -28,7 +28,7 @@ class CAPDU {
   int get length => 4 + (lc == 0 ? 0 : 1) + data.length + (le == null ? 0 : 1);
 
   /// Converts the CAPDU object to a Uint8List.
-  Uint8List toUint8List() {
+  Uint8List toBytes() {
     var buffer = Uint8List(length);
     buffer[0] = cla;
     buffer[1] = ins;
@@ -48,8 +48,10 @@ class CAPDU {
   }
 
   /// Converts the CAPDU object to a pointer of unsigned characters.
-  ffi.Pointer<ffi.UnsignedChar> toBytes() {
-    var buffer = calloc<ffi.UnsignedChar>(length);
+  ffi.Pointer<ffi.UnsignedChar> toNativePointer([
+    ffi.Allocator allocator = calloc,
+  ]) {
+    var buffer = allocator<ffi.UnsignedChar>(length);
     buffer[0] = cla;
     buffer[1] = ins;
     buffer[2] = p1;
