@@ -76,15 +76,16 @@ void main() async {
       expect(erapdu.data.length, 16 + 8);
       expect(erapdu.sw1, rapdu.sw1);
       expect(erapdu.sw2, rapdu.sw2);
-      expect(scp03.counter, 1);
+
+      expect(scp03.counter, 0);
       expect(scp03.macChainingValue, macChainingValue);
 
       final ok = scp03.checkResponse(erapdu);
       expect(ok, isTrue);
-      expect(scp03.counter, 1);
+      expect(scp03.counter, 0);
 
       final data = scp03.decryptResponseData(erapdu);
-      expect(scp03.counter, 1);
+      expect(scp03.counter, 0);
       expect(data.length, rapdu.data.length);
       expect(memEquals(data, Uint8List.fromList(rapdu.data)), isTrue);
     });
@@ -135,15 +136,15 @@ void main() async {
       expect(erapdu.data.length, 16 + 8);
       expect(erapdu.sw1, rapdu.sw1);
       expect(erapdu.sw2, rapdu.sw2);
-      expect(scp03.counter, 1);
+      expect(scp03.counter, 0);
       expect(scp03.macChainingValue, macChainingValue);
 
       final ok = scp03.checkResponse(erapdu);
       expect(ok, isTrue);
-      expect(scp03.counter, 1);
+      expect(scp03.counter, 0);
 
       final data = scp03.decryptResponseData(erapdu);
-      expect(scp03.counter, 1);
+      expect(scp03.counter, 0);
       expect(data.length, rapdu.data.length);
       expect(listEquals(data, rapdu.data), isTrue);
     });
@@ -154,12 +155,14 @@ void main() async {
       final macChainingValue = List.filled(16, 0);
       final erapdu = scp03.generateResponse(rapdu, macChainingValue);
 
+      expect(scp03.counter, 0);
       expect(erapdu.data.length, 8);
       expect(erapdu.sw1, rapdu.sw1);
       expect(erapdu.sw2, rapdu.sw2);
 
       final ok = scp03.checkResponse(erapdu);
       expect(ok, isTrue);
+      expect(scp03.counter, 0);
     });
   });
 }

@@ -201,13 +201,11 @@ class Scp03 {
 
   /// Generates a secure RAPDU response by encrypting the data and adding a R-MAC.
   ///
-  /// The counter for ICV is incremented for each response. The MAC chaining
-  /// value is updated with the given [macChainingValue]. The R-MAC is
-  /// calculated with the R-APDU header and the encrypted payload data.
+  /// The MAC chaining value is updated with the given [macChainingValue].
+  /// Before calling this method, you may need to increment the counter.
+  /// The R-MAC is calculated with the R-APDU header and the encrypted payload data.
   RAPDU generateResponse(RAPDU rapdu, List<int> macChainingValue) {
     _macChainingValue = Uint8List.fromList(macChainingValue);
-
-    counter++;
 
     final plainText = Uint8List.fromList(rapdu.data);
 
