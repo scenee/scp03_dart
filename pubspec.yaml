@@ -1,12 +1,11 @@
 name: scp03
 description: A SCP03(GlobalPlatform Technology Secure Channel Protocol '03') implementation in Dart
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/scenee/scp03_dart
 
 environment:
   sdk: ^3.6.0
 
-# Add regular dependencies here.
 dependencies:
   ffi: ^2.1.3
   ffi_assist: ^0.1.0
@@ -16,9 +15,9 @@ dev_dependencies:
   test: ^1.24.0
   ffigen: ^16.0.0
 
-
+# The generated code is used only for testing
 ffigen:
-  output: 'test/scp03_crypto/openssl.dart'
+  output: 'test/crypto/openssl.dart'
   name: 'OpenSSL'
   # You have to specify the path to the header files of the C library you want to bind.
   compiler-opts:
