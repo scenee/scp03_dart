@@ -6,27 +6,53 @@ import "package:ffi_assist/ffi_assist.dart";
 import "apdu/capdu.dart";
 import "apdu/rapdu.dart";
 
+/// An interface for SCP03 cryptographic operations.
+///
+/// This interface defines the necessary methods and properties that any
+/// SCP03 cryptographic implementation must provide. SCP03 is a secure
+/// channel protocol used for establishing a secure communication channel
+/// between a off-card(host) entity and a on-card entity.
+///
+/// Implementations of this interface should provide the cryptographic
+/// operations required for SCP03, such as key derivation, encryption,
+/// and MAC generation.
 abstract interface class SCP03CryptoInterface {
   Uint8List aes128CbcEncrypt(Uint8List key, Uint8List iv, Uint8List data);
   Uint8List aes128CbcDecrypt(Uint8List key, Uint8List iv, Uint8List data);
   Uint8List cmacAes128(Uint8List key, Uint8List data);
 }
 
-/// A class that implements the SCP03 (Secure Channel Protocol '03')
-/// for secure communication using AES-128 encryption.
+/// A class representing the SCP03 protocol.
+///
+/// SCP03 (Secure Channel Protocol 03) is a protocol used for establishing
+/// a secure channel between on-card and off-card entities. This class provides
+/// methods and properties to facilitate the secure communication.
+///
+/// Note: Ensure that you have to generate necessary cryptographic keys using
+/// certain key derivation methods before using this class.
 class Scp03 {
   // Constants
   static const blockSize = 16;
   static const _zeroVector = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   final SCP03CryptoInterface crypto;
+
+  /// The S-ENC key
   final Uint8List senc;
+  // The S-MAC key
   final Uint8List smac;
+  // The S-RMAC key
   final Uint8List srmac;
 
+  /// Generally the counter is incremented for each command generataion in a
+  /// session using SCP03. The counter is used to generate the ICV (Initial
+  /// Chaining Value) for the command and response. An on-card entity should
+  /// increment the counter manually for each response to a command.
   int counter = 0x00;
 
   Uint8List _macChainingValue;
+
+  /// The current MAC chaining value used for the C-MAC and R-MAC generation.
   Uint8List get macChainingValue => _macChainingValue;
 
   /// Creates an instance of [Scp03] with the given encryption keys and crypto interface.
