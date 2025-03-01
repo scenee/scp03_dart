@@ -52,9 +52,9 @@ class CAPDU {
   }
 
   /// Converts the CAPDU object to a pointer of unsigned characters.
-  ffi.Pointer<ffi.UnsignedChar> toNativePointer([
+  ffi.Pointer<ffi.UnsignedChar> toNativePointer({
     ffi.Allocator allocator = calloc,
-  ]) {
+  }) {
     var buffer = allocator<ffi.UnsignedChar>(length);
     buffer[0] = cla;
     buffer[1] = ins;
