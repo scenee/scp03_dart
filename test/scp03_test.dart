@@ -58,7 +58,7 @@ void main() async {
       final capdu = CAPDU(cla: cla, ins: 0x00, p1: 0x00, p2: 0x00, data: []);
       final eapdu = scp03.generateCommand(capdu);
       expect(eapdu.lc, 0x08);
-      expect(eapdu.le, 0x00);
+      expect(eapdu.le, null);
       expect(eapdu.data.length, 8);
     });
   });

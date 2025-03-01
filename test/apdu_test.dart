@@ -7,8 +7,14 @@ import "dart:ffi" as ffi;
 void main() {
   group("CAPDU", () {
     test("toBytes", () {
-      final capdu =
-          CAPDU(cla: 0x00, ins: 0xA4, p1: 0x04, p2: 0x00, data: [0x3F, 0x01]);
+      final capdu = CAPDU(
+        cla: 0x00,
+        ins: 0xA4,
+        p1: 0x04,
+        p2: 0x00,
+        data: [0x3F, 0x01],
+        le: 0x00,
+      );
       final bytes = capdu.toBytes();
       expect(
         bytes,
@@ -17,8 +23,14 @@ void main() {
     });
 
     test("toNativePointer", () {
-      final capdu =
-          CAPDU(cla: 0x00, ins: 0xA4, p1: 0x04, p2: 0x00, data: [0x3F, 0x01]);
+      final capdu = CAPDU(
+        cla: 0x00,
+        ins: 0xA4,
+        p1: 0x04,
+        p2: 0x00,
+        data: [0x3F, 0x01],
+        le: 0x00,
+      );
       final ptr = capdu.toNativePointer();
       expect(
         (ptr as ffi.Pointer<ffi.Uint8>).asTypedList(8),
@@ -28,10 +40,21 @@ void main() {
     });
 
     test("toString", () {
-      final capdu =
-          CAPDU(cla: 0x00, ins: 0xA4, p1: 0x04, p2: 0x00, data: [0x3F, 0x00]);
+      final capdu = CAPDU(
+        cla: 0x00,
+        ins: 0xA4,
+        p1: 0x04,
+        p2: 0x00,
+        data: [0x3F, 0x00],
+        le: 0x00,
+      );
       expect(capdu.toString(),
           "C_APDU{cla: 00 ins: a4 p1: 04 p2: 00 lc: 02 le: 00 data: 3f00}");
+    });
+
+    test("No data", () {
+      final capdu = CAPDU(cla: 0x00, ins: 0xA4, p1: 0x04, p2: 0x00, data: []);
+      expect(capdu.toString(), "C_APDU{cla: 00 ins: a4 p1: 04 p2: 00}");
     });
   });
 

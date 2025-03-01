@@ -15,7 +15,7 @@ class RAPDU {
 
   /// Creates a RAPDU object with the given parameters.
   RAPDU({
-    required this.data,
+    this.data = const [],
     required this.sw1,
     required this.sw2,
   });

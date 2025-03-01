@@ -24,9 +24,9 @@ class CAPDU {
     required this.ins,
     required this.p1,
     required this.p2,
-    required this.data,
-  })  : lc = data.length,
-        le = data.isEmpty ? null : 0;
+    this.data = const [],
+    this.le,
+  }) : lc = data.length;
 
   /// Returns the length of the CAPDU object.
   int get length => 4 + (lc == 0 ? 0 : 1) + data.length + (le == null ? 0 : 1);
@@ -43,10 +43,10 @@ class CAPDU {
       for (var i = 0; i < data.length; i++) {
         buffer[5 + i] = data[i];
       }
-    }
-    final le = this.le;
-    if (le != null) {
-      buffer[length - 1] = le;
+      final le = this.le;
+      if (le != null) {
+        buffer[length - 1] = le;
+      }
     }
     return buffer;
   }
@@ -60,21 +60,24 @@ class CAPDU {
     buffer[1] = ins;
     buffer[2] = p1;
     buffer[3] = p2;
-    buffer[4] = lc;
     if (data.isNotEmpty) {
+      buffer[4] = lc;
       for (var i = 0; i < data.length; i++) {
         buffer[5 + i] = data[i];
       }
-    }
-    final le = this.le;
-    if (le != null) {
-      buffer[length - 1] = le;
+      final le = this.le;
+      if (le != null) {
+        buffer[length - 1] = le;
+      }
     }
     return buffer;
   }
 
   @override
   String toString() {
+    if (data.isEmpty) {
+      return "C_APDU{cla: ${cla.toHexString()} ins: ${ins.toHexString()} p1: ${p1.toHexString()} p2: ${p2.toHexString()}}";
+    }
     return "C_APDU{cla: ${cla.toHexString()} ins: ${ins.toHexString()} p1: ${p1.toHexString()} p2: ${p2.toHexString()} lc: ${lc.toHexString()} le: ${le?.toHexString() ?? "none"} data: ${data.toHexString()}}";
   }
 }
