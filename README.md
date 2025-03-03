@@ -1,8 +1,8 @@
-# SCP03
+# scp03
 
 A SCP03 (GlobalPlatform Technology Secure Channel Protocol '03') implementation in Dart.
 
-This implementation verions conforms to "GlobalPlatform Card Technology Secure Channel Protocol '03' Card Specification v2.2 – Amendment D Version 1.1.1" (GPC_SPE_014).
+This implementation conforms to "GlobalPlatform Card Technology Secure Channel Protocol '03' Card Specification v2.2 – Amendment D Version 1.1.1" (GPC_SPE_014).
 
 ## Features
 
@@ -12,7 +12,7 @@ This implementation verions conforms to "GlobalPlatform Card Technology Secure C
 
 ## Limitations
 
-- “AES-128” support, not include “AES-192” and "AES-256" for now.
+- Only AES-128 is supported. AES-192 and AES-256 are not supported.
 - This library won't support "Explicit Secure Channel Initiation".
 
 ## Installation
@@ -54,6 +54,22 @@ void main() {
 ```
 
 ## Testing
+
+Before running the tests, just install the OpenSSL v3 as below.
+
+Debian, Ubuntu:
+
+```sh
+sudo apt-get install libssl-dev
+```
+
+macOS:
+
+```sh
+brew install openssl@3 # Homebrew
+```
+
+See also verify the installation paths and `getLibraryPath()` implementation in [scp03_crypto.dart](test/crypto/scp03_crypto.dart).
 
 To run the tests, use the following command:
 
