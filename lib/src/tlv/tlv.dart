@@ -46,6 +46,54 @@ class TLV {
       );
     }
   }
+
+  /// Parses the length bytes from the given data starting at the specified index.
+  ///
+  /// This method returns a tuple containing the length and the number of bytes
+  /// used to encode the length.
+  ///
+  /// - Parameters:
+  ///   - data: The list of integers representing the data.
+  ///   - start: The starting index in the data from which to parse the length bytes.
+  /// - Returns: A tuple where the first element is the length and the second element
+  ///   is the number of bytes used to encode the length.
+  static (int, int) parseLengthBytes(List<int> data, int start) {
+    var length = -1;
+    var numOfBytes = 0;
+
+    if (start >= data.length) return (length, numOfBytes);
+
+    final len1 = data[start];
+    if (len1 < 0x80) {
+      length = len1;
+      numOfBytes += 1;
+    } else if (len1 == 0x81) {
+      if (start + 1 >= data.length) return (length, numOfBytes);
+
+      length = data[start + 1];
+      numOfBytes += 2;
+    } else if (len1 == 0x82) {
+      if (start + 2 >= data.length) return (length, numOfBytes);
+
+      length = (data[start + 1] << 8) + data[start + 2];
+      numOfBytes += 3;
+    } else if (len1 == 0x83) {
+      if (start + 3 >= data.length) return (length, numOfBytes);
+
+      length =
+          (data[start + 1] << 16) + (data[start + 2] << 8) + data[start + 3];
+      numOfBytes += 4;
+    } else if (len1 == 0x84) {
+      if (start + 4 >= data.length) return (length, numOfBytes);
+
+      length = (data[start + 1] << 24) +
+          (data[start + 2] << 16) +
+          (data[start + 3] << 8) +
+          data[start + 4];
+      numOfBytes += 5;
+    }
+    return (length, numOfBytes);
+  }
 }
 
 extension TLVList on List<TLV> {

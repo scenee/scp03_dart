@@ -26,9 +26,12 @@ void main() {
     });
 
     test("Parse multiple TLVs", () {
-      final tlvs = TLVParser.parse(
-          [0x59, 0x02, 0x95, 0x02, 0x5F, 0x24, 0x03, 0x42, 0x42, 0x42]);
-      expect(tlvs.length, equals(2));
+      final tlvs = TLVParser.parse([
+        0x59, 0x02, 0x95, 0x02, // First TLV
+        0x5F, 0x24, 0x03, 0x42, 0x42, 0x42, // Second TLV
+        0x59, 0x02, 0x95, 0x02, // Third TLV
+      ]);
+      expect(tlvs.length, equals(3));
 
       final do1 = tlvs[0];
       expect(do1.tag, equals([0x59]));
@@ -39,6 +42,11 @@ void main() {
       expect(do2.tag, equals([0x5F, 0x24]));
       expect(do2.value.length, equals(3));
       expect(do2.value, equals([0x42, 0x42, 0x42]));
+
+      final do3 = tlvs[0];
+      expect(do3.tag, equals([0x59]));
+      expect(do3.value.length, equals(2));
+      expect(do3.value, equals([0x95, 0x02]));
     });
 
     test("Parse long tag and long length (0x81)", () {
