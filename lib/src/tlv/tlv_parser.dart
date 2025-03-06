@@ -3,6 +3,10 @@ import "tlv.dart";
 /// A parser class for TLV (Tag-Length-Value) data objects.
 class TLVParser {
   /// Parses a list of bytes into a list of TLV objects.
+  ///
+  /// The [data] is a list of integers representing the TLV data to parse.
+  ///
+  /// Returns a list of parsed TLV objects.
   static List<TLV> parse(List<int> data) {
     var tlvs = <TLV>[];
     for (var i = 0; i < data.length;) {
@@ -17,6 +21,12 @@ class TLVParser {
   }
 
   /// Parses a TLV object from a list of bytes starting at the given index.
+  ///
+  /// The [data] is a list of integers representing the TLV data.
+  /// The [i] is the starting index in the data from which to parse the TLV object.
+  ///
+  /// Returns a tuple where the first element is the parsed TLV object and the second
+  /// element is the number of bytes consumed.
   static (TLV, int) _parseTLV(List<int> data, int i) {
     final emptyTLV = TLV(tag: [], value: []);
     int numOfBytes = 0;

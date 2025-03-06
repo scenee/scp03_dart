@@ -52,11 +52,11 @@ class TLV {
   /// This method returns a tuple containing the length and the number of bytes
   /// used to encode the length.
   ///
-  /// - Parameters:
-  ///   - data: The list of integers representing the data.
-  ///   - start: The starting index in the data from which to parse the length bytes.
-  /// - Returns: A tuple where the first element is the length and the second element
-  ///   is the number of bytes used to encode the length.
+  /// The [data] is a list of integers representing the data.
+  /// The [start] is the starting index in the data from which to parse the length bytes.
+  ///
+  /// Returns a tuple where the first element is the length and the second element
+  /// is the number of bytes used to encode the length.
   static (int, int) parseLengthBytes(List<int> data, int start) {
     var length = -1;
     var numOfBytes = 0;
