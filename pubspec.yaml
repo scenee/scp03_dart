@@ -1,6 +1,6 @@
 name: scp03
 description: A SCP03(GlobalPlatform Technology Secure Channel Protocol '03') implementation in Dart
-version: 1.0.0
+version: 1.1.0
 repository: https://github.com/scenee/scp03_dart
 
 environment:
