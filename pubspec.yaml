@@ -11,7 +11,7 @@ dependencies:
   ffi_assist: ^0.1.0
 
 dev_dependencies:
-  lints: ^5.0.0
+  lints: ">=5.0.0 <7.0.0"
   test: ^1.24.0
   ffigen: ">=16.0.0 <19.0.0"
 
